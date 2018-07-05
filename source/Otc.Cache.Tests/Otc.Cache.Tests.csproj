@@ -13,4 +13,9 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Otc.Cache.Abstractions\Otc.Cache.Abstractions.csproj" />
+    <ProjectReference Include="..\Otc.Cache\Otc.Cache.csproj" />
+  </ItemGroup>
+
 </Project>
