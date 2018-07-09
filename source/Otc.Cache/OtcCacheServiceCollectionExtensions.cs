@@ -1,43 +1,73 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Otc.Cache
 {
     public static class OtcCacheServiceCollectionExtensions
     {
-        public static IServiceCollection AddCacheDistributed(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCacheDistributed(this IServiceCollection services, Action<ApplicationConfigurationLambda> configurationLambda)
         {
-            var aplicacao = "Otc.Cache";
-            var cacheType = configuration.GetSection("CacheConfig").GetValue<CacheType>("CacheType");
-
-            switch (cacheType)
+            if (services == null)
             {
-                case CacheType.Sql:
-                    services.AddDistributedSqlServerCache(o =>
-                    {
-                        o.ConnectionString = configuration.GetSection("ConnectionStrings").GetValue<string>("SQLCONNSTR_CacheContext");
-                        o.SchemaName = "dbo";
-                        o.TableName = "CacheTable";
-                    });
-                    break;
-                case CacheType.Redis:
-                    services.AddDistributedRedisCache(options =>
-                    {
-                        options.InstanceName = $"{aplicacao}-";
-                        options.Configuration = configuration.GetSection("ConnectionStrings").GetValue<string>("REDIS_CacheContext");
-                    });
-                    break;
+                throw new ArgumentNullException(nameof(services));
             }
 
+            if (configurationLambda == null)
+            {
+                throw new ArgumentNullException(nameof(configurationLambda));
+            }
 
-            services.AddSingleton
-                (
-                    c => new CacheParametros(configuration.GetSection("CacheConfig").GetValue<int>("CacheTime"),
-                                             configuration.GetSection("CacheConfig").GetValue<bool>("CacheEnable"),
-                                             aplicacao, cacheType)
-                );
+            // Chama o lambda referente a configuracao da app, o que ira registrar o tipo ApplicationConfiguration
+            var applicationConfigurationLambda = new ApplicationConfigurationLambda(services);
+            configurationLambda.Invoke(applicationConfigurationLambda);
 
             return services;
+        }
+    }
+
+    public class ApplicationConfigurationLambda
+    {
+        private readonly IServiceCollection services;
+
+        public ApplicationConfigurationLambda(IServiceCollection services)
+        {
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
+        }
+
+        public void Configure(ICacheConfiguration applicationConfiguration)
+        {
+            string aplicacao = "Otc.Cache";
+            CacheParametros cacheParametros;
+
+            if (applicationConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(applicationConfiguration));
+            }
+
+            if (applicationConfiguration.CacheType == CacheType.Redis)
+            {
+                RedisCacheConfiguration config = applicationConfiguration as RedisCacheConfiguration;
+
+                services.AddDistributedRedisCache(options =>
+                {
+                    options.InstanceName = $"{aplicacao}-";
+                    options.Configuration = config.RedisConnection;
+                });
+            }
+            else if (applicationConfiguration.CacheType == CacheType.Sql)
+            {
+                SqlCacheConfiguration config = applicationConfiguration as SqlCacheConfiguration;
+
+                services.AddDistributedSqlServerCache(o =>
+                {
+                    o.ConnectionString = config.SqlConnection;
+                    o.SchemaName = config.SchemaName;
+                    o.TableName = config.TableName;
+                });
+            }
+
+            services.AddSingleton(c => new CacheParametros(10, true, aplicacao, applicationConfiguration.CacheType));
+            services.AddSingleton(applicationConfiguration);
         }
     }
 }
