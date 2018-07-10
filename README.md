@@ -1,7 +1,8 @@
 # Otc.Cache
 [![Build Status](https://travis-ci.org/OleConsignado/otc-cache.svg?branch=master)](https://travis-ci.org/OleConsignado/otc-cache)
 
-Otc.Cache is a simple distributed cache that´s works with Sql Server and Redis.
+Otc.Cache is a simple distributed cache that´s works with Sql Server or Redis. 
+You can switch between one and another just change the ConfigurationType in Configure method.
 
 # Setup
 Add nuget package 'Otc.Cache.Abstraction' and 'Otc.Cache' to your project.
