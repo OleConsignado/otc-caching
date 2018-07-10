@@ -1,14 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-//using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Otc.Cache.Tests
 {
     public class PropostaCache : Cache<PropostaDto>
     {
-        public PropostaCache(IDistributedCache distrinutedCache, CacheParametros parametros) : base(distrinutedCache, parametros)
+        public PropostaCache(IDistributedCache distrinutedCache, CacheParametros parametros, ILoggerFactory loggerFactory) : base(distrinutedCache, parametros, loggerFactory)
         {
         }
 

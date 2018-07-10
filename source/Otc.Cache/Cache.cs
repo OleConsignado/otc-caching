@@ -11,11 +11,11 @@ namespace Otc.Cache
 
         public const int CacheErrorEventId = 23332;
 
-        public Cache(IDistributedCache distrinutedCache, CacheParametros parametros)
+        public Cache(IDistributedCache distrinutedCache, CacheParametros parametros, ILoggerFactory loggerFactory)
         {
             _parametros = parametros;
 
-            _cache = new CacheDistributed(distrinutedCache);
+            _cache = new CacheDistributed(distrinutedCache, loggerFactory);
         }
 
         private string GetAlias() => GetType().FullName;

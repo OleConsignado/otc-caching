@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Otc.Cache
@@ -36,9 +37,6 @@ namespace Otc.Cache
 
         public void Configure(ICacheConfiguration applicationConfiguration)
         {
-            string aplicacao = "Otc.Cache";
-            CacheParametros cacheParametros;
-
             if (applicationConfiguration == null)
             {
                 throw new ArgumentNullException(nameof(applicationConfiguration));
@@ -50,7 +48,6 @@ namespace Otc.Cache
 
                 services.AddDistributedRedisCache(options =>
                 {
-                    options.InstanceName = $"{aplicacao}-";
                     options.Configuration = config.RedisConnection;
                 });
             }
@@ -66,7 +63,7 @@ namespace Otc.Cache
                 });
             }
 
-            services.AddSingleton(c => new CacheParametros(10, true, aplicacao, applicationConfiguration.CacheType));
+            services.AddSingleton(c => new CacheParametros(applicationConfiguration.CacheDuration, applicationConfiguration.Enabled, applicationConfiguration.Aplicacao, applicationConfiguration.CacheType));
             services.AddSingleton(applicationConfiguration);
         }
     }

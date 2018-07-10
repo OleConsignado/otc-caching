@@ -14,14 +14,20 @@ namespace Otc.Cache.Tests
         {
             var services = new ServiceCollection();
 
+            services.AddLogging();
             services.AddCacheDistributed(app => app.Configure(new RedisCacheConfiguration()
             {
+                Aplicacao = "redisCache",
+                Enabled = true,
                 CacheDuration = 10,
                 RedisConnection = "k8s01.oleconsignado.com.br:30379"
             }));
 
             //services.AddCacheDistributed(app => app.Configure(new SqlCacheConfiguration()
             //{
+            //    Aplicacao = "sqlCache",
+            //    CacheDuration = 10,
+            //    Enabled = true,
             //    SchemaName = "dbo",
             //    TableName = "CacheTable",
             //    SqlConnection = "Data Source=BBSSQLHML,1433;Initial Catalog=OleCache;User Id=u_olaadmin;Password=u_0l@@dm1n;"
@@ -39,7 +45,7 @@ namespace Otc.Cache.Tests
 
             var propostaDto = new PropostaDto
             {
-                Cpf = "012.345.678-90",
+                Cpf = "012.345.678-91",
                 Nome = "Luciano Lima",
                 Data = DateTime.Now.ToShortDateString()
             };

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-//using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Otc.Cache.Abstractions;
 using System;
@@ -9,17 +9,17 @@ namespace Otc.Cache
     public class CacheDistributed : ICache
     {
         private readonly IDistributedCache _distrinutedCache;
-        //private readonly ILogger _logger;
+        private readonly ILogger _logger;
         public const int CacheErrorEventId = 23332;
-        public CacheDistributed(IDistributedCache distrinutedCache)
+        public CacheDistributed(IDistributedCache distrinutedCache, ILoggerFactory loggerFactory)
         {
-            //if (loggerFactory == null)
-            //{
-            //    throw new ArgumentNullException(nameof(loggerFactory));
-            //}
+            if (loggerFactory == null)
+            {
+                throw new ArgumentNullException(nameof(loggerFactory));
+            }
 
             _distrinutedCache = distrinutedCache;
-            //_logger = loggerFactory.CreateLogger<CacheDistributed>();
+            _logger = loggerFactory.CreateLogger<CacheDistributed>();
         }
 
         public void Remove(string key)
@@ -43,7 +43,7 @@ namespace Otc.Cache
             }
             catch (Exception e)
             {
-                //_logger.LogCritical(CacheErrorEventId, e, "Erro ao acessar o cache.");
+                _logger.LogCritical(CacheErrorEventId, e, "Erro ao gravar no cache.");
             }
         }
 
@@ -58,7 +58,7 @@ namespace Otc.Cache
             }
             catch (Exception e)
             {
-                //_logger.LogCritical(CacheErrorEventId, e, "Erro ao acessar o cache.");
+                _logger.LogCritical(CacheErrorEventId, e, "Erro ao acessar o cache.");
                 entity = null;
                 return false;
             }
