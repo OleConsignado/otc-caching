@@ -10,18 +10,27 @@ Add nuget package 'Otc.Cache.Abstraction' and 'Otc.Cache' to your project.
 
 > Install-Package 'Otc.Cache'
 
-Register the package in the 'Startup.cs' service collection passing the IConfiguration instance to the method.
+Register and initialize the package in the 'Startup.cs' service collection passing the cache configuration type that you want. You could use RedisCacheConfiguration OR SqlCacheConfiguration.
+
 ```cs
-        public IConfiguration Configuration { get; }
+            /// Redis Cache Configuration
+            services.AddCacheDistributed(app => app.Configure(new RedisCacheConfiguration()
+            {
+                Aplicacao = "redisCache",
+                Enabled = true,
+                CacheDuration = 10,
+                RedisConnection = "redis.mycomp.com.br:30379"
+            }));
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+            services.AddCacheDistributed(app => app.Configure(new SqlCacheConfiguration()
+            {
+                Aplicacao = "sqlCache",
+                CacheDuration = 10,
+                Enabled = true,
+                SchemaName = "dbo",
+                TableName = "CacheTable",
+                SqlConnection = "Data Source=SQLHML,1433;Initial Catalog=MyCache;User Id=u_sqlcache;Password=u_xxx;"
+            }));
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddCacheDistributed(Configuration);
-        }
 ```
 
