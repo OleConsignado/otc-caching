@@ -7,8 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Otc.Cache.Abstractions", "O
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Otc.Cache", "Otc.Cache\Otc.Cache.csproj", "{F356CB30-A707-49D8-BB15-127575D68E27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otc.Cache.Tests", "Otc.Cache.Tests\Otc.Cache.Tests.csproj", "{5A81FF6B-C1C2-4C0F-BDE3-72D9F2E1FB19}"
-EndProject
+# Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Otc.Cache.Tests", "Otc.Cache.Tests\Otc.Cache.Tests.csproj", "{5A81FF6B-C1C2-4C0F-BDE3-72D9F2E1FB19}"
+# EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
