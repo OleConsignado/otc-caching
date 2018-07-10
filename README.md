@@ -13,7 +13,7 @@ Add nuget package 'Otc.Cache.Abstraction' and 'Otc.Cache' to your project.
 Register and initialize the package in the 'Startup.cs' service collection passing the cache configuration type that you want. You could use RedisCacheConfiguration OR SqlCacheConfiguration.
 
 
-            ####/// Redis Cache Configuration
+#### Redis Cache Configuration
 ```cs
             services.AddCacheDistributed(app => app.Configure(new RedisCacheConfiguration()
             {
@@ -24,9 +24,9 @@ Register and initialize the package in the 'Startup.cs' service collection passi
             }));
 ```
 
-            ## OR
+### OR
             
-            ####// SQL Server Cache Configuration
+#### SQL Server Cache Configuration
 ```cs
             services.AddCacheDistributed(app => app.Configure(new SqlCacheConfiguration()
             {
