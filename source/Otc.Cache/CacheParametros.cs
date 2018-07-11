@@ -8,19 +8,11 @@
 
         public string Aplicacao { get; private set; }
 
-        public CacheType CacheType { get; private set; }
-
-        public CacheParametros(int time, bool enabled, string aplicacao, CacheType cacheType)
+        public CacheParametros(int time, bool enabled, string aplicacao)
         {
             Time = time;
             Enabled = enabled;
             Aplicacao = aplicacao;
-            CacheType = cacheType;
-        }
-
-        public void SetEnabled(bool enabled)
-        {
-            Enabled = enabled;
         }
     }
 }

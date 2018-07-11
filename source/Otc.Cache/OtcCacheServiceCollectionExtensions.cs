@@ -42,7 +42,7 @@ namespace Otc.Cache
                 throw new ArgumentNullException(nameof(applicationConfiguration));
             }
 
-            if (applicationConfiguration.CacheType == CacheType.Redis)
+            if (applicationConfiguration.GetType() == typeof(RedisCacheConfiguration))
             {
                 RedisCacheConfiguration config = applicationConfiguration as RedisCacheConfiguration;
 
@@ -51,7 +51,7 @@ namespace Otc.Cache
                     options.Configuration = config.RedisConnection;
                 });
             }
-            else if (applicationConfiguration.CacheType == CacheType.Sql)
+            else if (applicationConfiguration.GetType() == typeof(SqlCacheConfiguration))
             {
                 SqlCacheConfiguration config = applicationConfiguration as SqlCacheConfiguration;
 
@@ -63,7 +63,7 @@ namespace Otc.Cache
                 });
             }
 
-            services.AddSingleton(c => new CacheParametros(applicationConfiguration.CacheDuration, applicationConfiguration.Enabled, applicationConfiguration.Aplicacao, applicationConfiguration.CacheType));
+            services.AddSingleton(c => new CacheParametros(applicationConfiguration.CacheDuration, applicationConfiguration.Enabled, applicationConfiguration.Aplicacao));
             services.AddSingleton(applicationConfiguration);
         }
     }

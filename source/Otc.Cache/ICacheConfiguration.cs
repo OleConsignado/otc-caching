@@ -2,8 +2,6 @@
 {
     public interface ICacheConfiguration
     {
-        CacheType CacheType { get; }
-
         int CacheDuration { get; set; }
 
         bool Enabled { get; set; }

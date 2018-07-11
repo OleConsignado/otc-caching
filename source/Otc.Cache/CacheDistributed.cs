@@ -8,23 +8,23 @@ namespace Otc.Cache
 {
     public class CacheDistributed : ICache
     {
-        private readonly IDistributedCache _distrinutedCache;
+        private readonly IDistributedCache _distributedCache;
         private readonly ILogger _logger;
         public const int CacheErrorEventId = 23332;
-        public CacheDistributed(IDistributedCache distrinutedCache, ILoggerFactory loggerFactory)
+        public CacheDistributed(IDistributedCache distributedCache, ILoggerFactory loggerFactory)
         {
             if (loggerFactory == null)
             {
                 throw new ArgumentNullException(nameof(loggerFactory));
             }
 
-            _distrinutedCache = distrinutedCache;
+            _distributedCache = distributedCache;
             _logger = loggerFactory.CreateLogger<CacheDistributed>();
         }
 
         public void Remove(string key)
         {
-            _distrinutedCache.Remove(key);
+            _distributedCache.Remove(key);
         }
 
         public void Set<T>(string key, T entity, int minutes)
@@ -39,7 +39,7 @@ namespace Otc.Cache
 
             try
             {
-                _distrinutedCache.SetString(key, value, options);
+                _distributedCache.SetString(key, value, options);
             }
             catch (Exception e)
             {
@@ -54,7 +54,7 @@ namespace Otc.Cache
 
             try
             {
-                value = _distrinutedCache.GetString(key);
+                value = _distributedCache.GetString(key);
             }
             catch (Exception e)
             {

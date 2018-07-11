@@ -14,11 +14,8 @@
 
         public string Aplicacao { get; set; }
 
-        public CacheType CacheType { get; }
-
         public SqlCacheConfiguration()
         {
-            CacheType = CacheType.Sql;
         }
     }
 }
