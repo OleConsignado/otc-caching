@@ -9,6 +9,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Equipe Arquitetura</Authors>
+    <Company>Olé Tecnologia</Company>
   </PropertyGroup>
 
   <ItemGroup>
