@@ -4,8 +4,8 @@ set -e
 
 CICD_COMMON_VERSION="v2.2"
 
-export CLASS_LIBRARY_PROJ_DIR=source/Otc.Cache.Abstractions
-export TEST_PROJ_DIR=source/Otc.Cache.Tests
+export CLASS_LIBRARY_PROJ_DIR=Source/Otc.Caching.Abstractions
+# export TEST_PROJ_DIR=Source/Otc.Caching.Tests
 
 cd $TRAVIS_BUILD_DIR
 
@@ -14,6 +14,10 @@ chmod +x ./cicd-common.sh
 
 ./cicd-common.sh $@
 
-export CLASS_LIBRARY_PROJ_DIR=source/Otc.Cache
+export CLASS_LIBRARY_PROJ_DIR=Source/Otc.Caching
+
+./cicd-common.sh $@
+
+export CLASS_LIBRARY_PROJ_DIR=Source/Otc.Caching.DistributedCache.All
 
 ./cicd-common.sh $@

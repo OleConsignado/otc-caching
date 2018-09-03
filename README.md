@@ -1,43 +1,33 @@
-# Otc.Cache
-[![Build Status](https://travis-ci.org/OleConsignado/otc-cache.svg?branch=master)](https://travis-ci.org/OleConsignado/otc-cache)
+# Otc.Caching
+[![Build Status](https://travis-ci.org/OleConsignado/otc-caching.svg?branch=master)](https://travis-ci.org/OleConsignado/otc-caching)
 
-Otc.Cache is a simple distributed cache that´s works with Sql Server or Redis. 
-You can switch between one and another just change the ConfigurationType in Configure method.
+Otc.Caching is a simple distributed cache built on top of Microsoft.Extensions.Caching. It provides the convenient `ITypedCache` interface and the ability to switch between Redis, Sql Server and Memory storage engine without needs of recompile it.
 
-# Setup
-Add nuget package 'Otc.Cache.Abstraction' and 'Otc.Cache' to your project.
+## Quickstart
 
-> Install-Package 'Otc.Cache.Abstraction'
+### Installation
 
-> Install-Package 'Otc.Cache'
+Install the [Otc.Caching.DistributedCache.All](https://www.nuget.org/packages/Otc.Caching.DistributedCache.All) package from NuGet.org.
 
-Register and initialize the package in the 'Startup.cs' service collection passing the cache configuration type that you want. You could use RedisCacheConfiguration OR SqlCacheConfiguration.
+At startup, add `DistributedCache` to your service collection by calling `DistributedCacheConfiguration` extension method for `IServiceCollection`:
 
-
-#### Redis Cache Configuration
 ```cs
-            services.AddCacheDistributed(app => app.Configure(new RedisCacheConfiguration()
-            {
-                Aplicacao = "redisCache",
-                Enabled = true,
-                CacheDuration = 10,
-                RedisConnection = "redis.mycomp.com.br:30379"
-            }));
+services.AddOtcDistributedCache(new DistributedCacheConfiguration(){
+    // ... see DistributedCacheConfiguration for details
+});
+
 ```
 
-### OR
-            
-#### SQL Server Cache Configuration
-```cs
-            services.AddCacheDistributed(app => app.Configure(new SqlCacheConfiguration()
-            {
-                Aplicacao = "sqlCache",
-                CacheDuration = 10,
-                Enabled = true,
-                SchemaName = "dbo",
-                TableName = "CacheTable",
-                SqlConnection = "Data Source=SQLHML,1433;Initial Catalog=MyCache;User Id=u_sqlcache;Password=u_xxx;"
-            }));
+### Usage
 
+```cs
+ITypedCache cache = ... // Get it by dependency injection
+var cacheKey = "my-cache-key";
+
+if (!cache.TryGet<MyModelClass>(cacheKey, out var myModelObj))
+{
+    myModelObj = ... // retrieve the object from it source here
+    cache.Set(cacheKey, myModelObj, TimeSpan.FromSeconds(30));
+}
 ```
 
