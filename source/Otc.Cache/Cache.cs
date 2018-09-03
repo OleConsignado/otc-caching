@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Otc.Cache.Abstractions;
+using System;
 
 namespace Otc.Cache
 {
+    [Obsolete("This package is obsolete, use Otc.Caching instead.")]
     public abstract class Cache<T> where T : class
     {
         private readonly CacheParametros _parametros;

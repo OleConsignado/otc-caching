@@ -1,5 +1,8 @@
-﻿namespace Otc.Cache
+﻿using System;
+
+namespace Otc.Cache
 {
+    [Obsolete("This package is obsolete, use Otc.Caching instead.")]
     public interface ICacheConfiguration
     {
         int CacheDuration { get; set; }

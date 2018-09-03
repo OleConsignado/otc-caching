@@ -6,6 +6,7 @@ using System;
 
 namespace Otc.Cache
 {
+    [Obsolete("This package is obsolete, use Otc.Caching instead.")]
     public class CacheDistributed : ICache
     {
         private readonly IDistributedCache _distributedCache;

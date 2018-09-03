@@ -1,5 +1,8 @@
-﻿namespace Otc.Cache
+﻿using System;
+
+namespace Otc.Cache
 {
+    [Obsolete("This package is obsolete, use Otc.Caching instead.")]
     public class RedisCacheConfiguration : ICacheConfiguration
     {
         /// <summary>

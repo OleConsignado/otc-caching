@@ -1,5 +1,8 @@
-﻿namespace Otc.Cache.Abstractions
+﻿using System;
+
+namespace Otc.Cache.Abstractions
 {
+    [Obsolete("This package is obsolete, use Otc.Caching instead.")]
     public interface ICache
     {
         void Set<T>(string key, T entity, int minutes) where T : class;

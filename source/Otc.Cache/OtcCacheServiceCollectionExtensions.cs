@@ -6,6 +6,7 @@ namespace Otc.Cache
 {
     public static class OtcCacheServiceCollectionExtensions
     {
+        [Obsolete("This package is obsolete, use Otc.Caching instead.")]
         public static IServiceCollection AddCacheDistributed(this IServiceCollection services, Action<ApplicationConfigurationLambda> configurationLambda)
         {
             if (services == null)
