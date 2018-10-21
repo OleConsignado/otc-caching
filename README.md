@@ -9,7 +9,7 @@ Otc.Caching is a simple distributed cache built on top of Microsoft.Extensions.C
 
 Install the [Otc.Caching.DistributedCache.All](https://www.nuget.org/packages/Otc.Caching.DistributedCache.All) package from NuGet.org.
 
-At startup, add `DistributedCache` to your service collection by calling `DistributedCacheConfiguration` extension method for `IServiceCollection`:
+At startup, add `DistributedCache` to your service collection by calling `AddDistributedCacheConfiguration` extension method for `IServiceCollection`:
 
 ```cs
 services.AddOtcDistributedCache(new DistributedCacheConfiguration(){
