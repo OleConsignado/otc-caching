@@ -69,10 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                         break;
                     case StorageType.Memory:
-                        services.AddDistributedMemoryCache(options =>
-                        {
-                            options.SizeLimit = distributedCacheConfiguration.MemorySizeLimit;
-                        });
+                        services.AddDistributedMemoryCache();
 
                         break;
                     default:

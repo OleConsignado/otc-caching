@@ -49,7 +49,7 @@ namespace Otc.Caching
                 }
                 catch (Exception e)
                 {
-                    logger.LogWarning(e,
+                    logger.LogWarning(3554, e,
                         $"{nameof(TypedCache)}.{nameof(Get)}: Exception was thrown while reading cache.");
                 }
             }
@@ -69,7 +69,7 @@ namespace Otc.Caching
                 }
                 catch (Exception e)
                 {
-                    logger.LogWarning(e,
+                    logger.LogWarning(2311, e,
                         $"{nameof(TypedCache)}.{nameof(Remove)}: Exception was thrown while removing cache with key '{{DistributedCacheKey}}'.", 
                         distributedCacheKey);
                 }
@@ -98,7 +98,7 @@ namespace Otc.Caching
                 }
                 catch (Exception e)
                 {
-                    logger.LogWarning(e,
+                    logger.LogWarning(9867, e,
                         $"{nameof(TypedCache)}.{nameof(Get)}: Exception was thrown while writing cache with key '{{DistributedCacheKey}}'.",
                         distributedCacheKey);
                 }
