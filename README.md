@@ -20,14 +20,28 @@ services.AddOtcDistributedCache(new DistributedCacheConfiguration(){
 
 ### Usage
 
+
+Async
+
 ```cs
 ITypedCache cache = ... // Get it by dependency injection
-var cacheKey = "my-cache-key";
+var cacheKey = "my-cache-key-async";
 
-if (!cache.TryGet<MyModelClass>(cacheKey, out var myModelObj))
-{
+var myModelObj = await cache.CacheManagerAsync<MyModelClass>(cacheKey, TimeSpan.FromSeconds(30), async () => { 
     myModelObj = ... // retrieve the object from it source here
-    cache.Set(cacheKey, myModelObj, TimeSpan.FromSeconds(30));
-}
+    return myModelObj;
+} ));
+```
+
+Sync
+
+```cs
+ITypedCache cache = ... // Get it by dependency injection
+var cacheKey = "my-cache-key-sync";
+
+var myModelObj = cache.CacheManager<MyModelClass>(cacheKey, TimeSpan.FromSeconds(30), () => { 
+    myModelObj = ... // retrieve the object from it source here
+    return myModelObj;
+} ));
 ```
 
