@@ -14,8 +14,8 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
+        /// <typeparam name="T">dynamic class</typeparam>
+        /// <param name="key">key who identify the data</param>
         /// <returns>The object read from cache or null if doesn't exists.</returns>
         Task<T> GetAsync<T>(string key) where T : class;
 
@@ -25,8 +25,8 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
+        /// <typeparam name="T">dynamic class</typeparam>
+        /// <param name="key">key who identify the data</param>
         /// <returns>The object read from cache or null if doesn't exists.</returns>
         T Get<T>(string key) where T : class;
 
@@ -36,9 +36,9 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the execption should be logged as warning.
         /// </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">dynamic class</typeparam>
+        /// <param name="key">key who identify the data</param>
+        /// <param name="value">value for store in cache</param>
         /// <returns>True if the cache exists; Otherwise False</returns>
         bool TryGet<T>(string key, out T value) where T : class;
 
@@ -48,10 +48,10 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <param name="absoluteExpirationRelativeToNow"></param>
+        /// <typeparam name="T">dynamic class</typeparam>
+        /// <param name="key">key who identify the data</param>
+        /// <param name="value">value for store in cache</param>
+        /// <param name="absoluteExpirationRelativeToNow">time/period that will expires after it</param>
         Task SetAsync<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) where T : class;
 
         /// <summary>
@@ -60,10 +60,10 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <param name="absoluteExpirationRelativeToNow"></param>
+        /// <typeparam name="T">dynamic class</typeparam>
+        /// <param name="key">key who identify the data</param>
+        /// <param name="value">value for store in cache</param>
+        /// <param name="absoluteExpirationRelativeToNow">time/period that will expires after it</param>
         void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) where T : class;
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">key who identify the data</param>
         Task RemoveAsync(string key);
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">key who identify the data</param>
         void Remove(string key);
 
         /// <summary>
@@ -90,12 +90,12 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="absoluteExpirationRelativeToNow"></param>
-        /// <param name="funcAsync"></param>
-        /// <returns>True if the cache exists; Otherwise False</returns>
-        Task<T> CacheManagerAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<Task<T>> funcAsync) where T : class;
+        /// <typeparam name="T">dynamic class</typeparam>
+        /// <param name="key">key who identify the data</param>
+        /// <param name="absoluteExpirationRelativeToNow">time/period that will expires after it</param>
+        /// <param name="funcAsync">func to execute and get the value to cache it</param>
+        /// <returns>The object read from cache or null if doesn't exists.</returns>
+        Task<T> GetAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<Task<T>> funcAsync) where T : class;
 
         /// <summary>
         /// Convenient way to get/add cache provided by key.
@@ -103,11 +103,11 @@ namespace Otc.Caching.Abstractions
         /// IMPORTANT: This operation should be exception free, if an error occurs while performing it, the exception should be logged as warning.
         /// </para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="absoluteExpirationRelativeToNow"></param>
-        /// <param name="func"></param>
-        /// <returns>True if the cache exists; Otherwise False</returns>
+        /// <typeparam name="T">dynamic class</typeparam>
+        /// <param name="key">key who identify the data</param>
+        /// <param name="absoluteExpirationRelativeToNow">time/period that will expires after it</param>
+        /// <param name="func">func to execute and get the value to cache it</param>
+        /// <returns>The object read from cache or null if doesn't exists.</returns>
         T CacheManager<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<T> func) where T : class;
     }
 }

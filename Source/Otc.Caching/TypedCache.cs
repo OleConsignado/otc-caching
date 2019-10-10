@@ -119,7 +119,7 @@ namespace Otc.Caching
             return value != null ? true : false;
         }
 
-        public async Task<T> CacheManagerAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<Task<T>> funcAsync) where T : class
+        public async Task<T> GetAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<Task<T>> funcAsync) where T : class
         {
             var value = await GetAsync<T>(key);
 
@@ -142,7 +142,7 @@ namespace Otc.Caching
             
             if (func != null) newTask = async () => func();
 
-            return CacheManagerAsync<T>(key, absoluteExpirationRelativeToNow, newTask).GetAwaiter().GetResult();
+            return GetAsync<T>(key, absoluteExpirationRelativeToNow, newTask).GetAwaiter().GetResult();
         }
     }
 }
