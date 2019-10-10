@@ -14,11 +14,15 @@ namespace Otc.Caching
         private readonly ILogger logger;
         private readonly string keyPrefix;
 
-        public TypedCache(IDistributedCache distributedCache, ILoggerFactory loggerFactory, CacheConfiguration cacheConfiguration)
+        public TypedCache(IDistributedCache distributedCache, ILoggerFactory loggerFactory, 
+            CacheConfiguration cacheConfiguration)
         {
-            this.distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
-            this.cacheConfiguration = cacheConfiguration ?? throw new ArgumentNullException(nameof(cacheConfiguration));
-            logger = loggerFactory?.CreateLogger<TypedCache>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+            this.distributedCache = distributedCache ?? 
+                throw new ArgumentNullException(nameof(distributedCache));
+            this.cacheConfiguration = cacheConfiguration ?? 
+                throw new ArgumentNullException(nameof(cacheConfiguration));
+            logger = loggerFactory?.CreateLogger<TypedCache>() ?? 
+                throw new ArgumentNullException(nameof(loggerFactory));
             keyPrefix = cacheConfiguration.CacheKeyPrefix ?? string.Empty;
         }
 
@@ -35,7 +39,8 @@ namespace Otc.Caching
             {
                 var distributedCacheKey = BuildKey(key);
 
-                logger.LogDebug($"{nameof(TypedCache)}.{nameof(GetAsync)}: Reading cache for key '{{DistributedCacheKey}}'.", distributedCacheKey);
+                logger.LogDebug("{MethodName}: Reading cache for key " +
+                    "'{DistributedCacheKey}'.", nameof(GetAsync), distributedCacheKey);
 
                 try
                 {
@@ -46,12 +51,13 @@ namespace Otc.Caching
                         result = JsonConvert.DeserializeObject<T>(cache);
                     }
 
-                    logger.LogDebug($"{nameof(TypedCache)}.{nameof(GetAsync)}: Cache for key '{{DistributedCacheKey}}' was successfuly read.", distributedCacheKey);
+                    logger.LogDebug("{MethodName}: Cache for key '{DistributedCacheKey}' " +
+                        "was successfuly read.", nameof(GetAsync), distributedCacheKey);
                 }
                 catch (Exception e)
                 {
-                    logger.LogWarning(e,
-                        $"{nameof(TypedCache)}.{nameof(GetAsync)}: Exception was thrown while reading cache.");
+                    logger.LogWarning(e, "{MethodName}: Exception was thrown while reading cache.", 
+                        nameof(GetAsync));
                 }
             }
 
@@ -74,40 +80,46 @@ namespace Otc.Caching
                 catch (Exception e)
                 {
                     logger.LogWarning(e,
-                        $"{nameof(TypedCache)}.{nameof(RemoveAsync)}: Exception was thrown while removing cache with key '{{DistributedCacheKey}}'.",
-                        distributedCacheKey);
+                        "{MethodName}: Exception was thrown while removing cache with key " +
+                        "'{DistributedCacheKey}'.", nameof(RemoveAsync), distributedCacheKey);
                 }
             }
         }
 
-        public void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) where T : class =>
-            SetAsync<T>(key, value, absoluteExpirationRelativeToNow).GetAwaiter().GetResult();
+        public void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) 
+            where T : class => 
+                SetAsync<T>(key, value, absoluteExpirationRelativeToNow).GetAwaiter().GetResult();
 
-        public async Task SetAsync<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) where T : class
+        public async Task SetAsync<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) 
+            where T : class
         {
             if (cacheConfiguration.CacheEnabled)
             {
                 var distributedCacheKey = BuildKey(key);
 
-                logger.LogInformation($"{nameof(TypedCache)}.{nameof(SetAsync)}: Creating cache with key '{{DistributedCacheKey}}'", distributedCacheKey);
+                logger.LogInformation("{MethodName}: Creating cache with key '{DistributedCacheKey}'", 
+                    nameof(SetAsync), distributedCacheKey);
 
                 try
                 {
 
-                    await distributedCache.SetStringAsync(distributedCacheKey, JsonConvert.SerializeObject(value),
+                    await distributedCache.SetStringAsync(distributedCacheKey, 
+                        JsonConvert.SerializeObject(value), 
                         new DistributedCacheEntryOptions()
                         {
                             AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow
                         });
 
-                    logger.LogInformation($"{nameof(TypedCache)}.{nameof(SetAsync)}: Cache with key {{DistributedCacheKey}} was successful created with absolute expiration set to {{Expiration}}",
-                        distributedCacheKey, DateTimeOffset.Now.Add(absoluteExpirationRelativeToNow));
+                    logger.LogInformation("{MethodName}: Cache with key {DistributedCacheKey} was " +
+                        "successful created with absolute expiration set to {Expiration}",
+                        nameof(SetAsync), distributedCacheKey, 
+                        DateTimeOffset.Now.Add(absoluteExpirationRelativeToNow));
                 }
                 catch (Exception e)
                 {
                     logger.LogWarning(e,
-                        $"{nameof(TypedCache)}.{nameof(GetAsync)}: Exception was thrown while writing cache with key '{{DistributedCacheKey}}'.",
-                        distributedCacheKey);
+                        "{MethodName}: Exception was thrown while writing cache with key " +
+                        "'{DistributedCacheKey}'.", nameof(GetAsync), distributedCacheKey);
                 }
             }
         }
@@ -119,7 +131,9 @@ namespace Otc.Caching
             return value != null ? true : false;
         }
 
-        public async Task<T> CacheManagerAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<Task<T>> funcAsync) where T : class
+        public async Task<T> GetAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, 
+            Func<Task<T>> funcAsync) 
+            where T : class
         {
             var value = await GetAsync<T>(key);
 
@@ -136,13 +150,16 @@ namespace Otc.Caching
             return value;
         }
 
-        public T CacheManager<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<T> func) where T : class
+        public T CacheManager<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<T> func) 
+            where T : class
         {
             Func<Task<T>> newTask = null;
-            
-            if (func != null) newTask = async () => func();
 
-            return CacheManagerAsync<T>(key, absoluteExpirationRelativeToNow, newTask).GetAwaiter().GetResult();
+            if (func != null)
+                newTask = async () => func();
+
+            return GetAsync<T>(key, absoluteExpirationRelativeToNow, newTask)
+                    .GetAwaiter().GetResult();
         }
     }
 }
