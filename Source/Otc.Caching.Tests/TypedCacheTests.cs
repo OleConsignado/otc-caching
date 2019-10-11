@@ -49,20 +49,6 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public void Test_CacheManager_Set()
-        {
-            var resultExpectedFromCache = typedCache.CacheManager("success", TimeSpan.FromSeconds(30), () => new User()
-            {
-                Id = 1,
-                Name = "Success test"
-            });
-
-            resultExpectedFromCache = typedCache.CacheManager<User>("success", TimeSpan.FromSeconds(1), null);
-
-            Assert.Equal(resultExpectedFromCache.Id, resultExpectedFromCache.Id);
-        }
-
-        [Fact]
         public async void Test_CacheManagerAsync_GetAsync_ExpiresCache()
         {
             await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync_ExpiresCache", TimeSpan.FromSeconds(1), null);
@@ -75,18 +61,6 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public void Test_CacheManager_Get_ExpiresCache()
-        {
-            typedCache.CacheManager<User>("Test_CacheManager_Get_ExpiresCache", TimeSpan.FromSeconds(1), null);
-
-            Thread.Sleep(1500);
-
-            typedCache.TryGet("Test_CacheManager_Get_ExpiresCache", out User resultFromCache);
-
-            Assert.Null(resultFromCache);
-        }
-
-        [Fact]
         public async void Test_CacheManagerAsync_GetAsync()
         {
             await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync", TimeSpan.FromSeconds(1), null);
@@ -94,16 +68,6 @@ namespace Otc.Caching.Tests
             typedCache.TryGet("Test_CacheManagerAsync_GetAsync", out User resultFromCache);
 
             Assert.Null(resultFromCache);
-        }
-
-        [Fact]
-        public void Test_CacheManager_Get()
-        {
-            typedCache.CacheManager<User>("Test_CacheManager_Get", TimeSpan.FromSeconds(30), () => new User());
-
-            typedCache.TryGet("Test_CacheManager_Get", out User resultFromCache);
-
-            Assert.NotNull(resultFromCache);
         }
 
         [Fact]

@@ -27,10 +27,17 @@ Async
 ITypedCache cache = ... // Get it by dependency injection
 var cacheKey = "my-cache-key-async";
 
-var myModelObj = await cache.CacheManagerAsync<MyModelClass>(cacheKey, TimeSpan.FromSeconds(30), async () => { 
+var myModelObj = await cache.GetAsync<MyModelClass>(cacheKey, TimeSpan.FromSeconds(30), async () => { 
     myModelObj = ... // retrieve the object from it source here
     return myModelObj;
 } ));
+```
+
+```cs
+ITypedCache cache = ... // Get it by dependency injection
+var cacheKey = "my-cache-get-key-async";
+
+var myModelObjFromCache = await cache.GetAsync<MyModelClass>(cacheKey);
 ```
 
 Sync
