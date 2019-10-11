@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Otc.Caching.Abstractions;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Otc.Caching
@@ -14,27 +15,24 @@ namespace Otc.Caching
         private readonly ILogger logger;
         private readonly string keyPrefix;
 
-        public TypedCache(IDistributedCache distributedCache, ILoggerFactory loggerFactory, 
+        public TypedCache(IDistributedCache distributedCache, ILoggerFactory loggerFactory,
             CacheConfiguration cacheConfiguration)
         {
-            this.distributedCache = distributedCache ?? 
+            this.distributedCache = distributedCache ??
                 throw new ArgumentNullException(nameof(distributedCache));
-            this.cacheConfiguration = cacheConfiguration ?? 
+            this.cacheConfiguration = cacheConfiguration ??
                 throw new ArgumentNullException(nameof(cacheConfiguration));
-            logger = loggerFactory?.CreateLogger<TypedCache>() ?? 
+            logger = loggerFactory?.CreateLogger<TypedCache>() ??
                 throw new ArgumentNullException(nameof(loggerFactory));
             keyPrefix = cacheConfiguration.CacheKeyPrefix ?? string.Empty;
         }
 
         private string BuildKey(string key) => keyPrefix + key;
 
-        public T Get<T>(string key) where T : class =>
-            GetAsync<T>(key).GetAwaiter().GetResult();
+        public T Get<T>(string key) => GetAsync<T>(key).GetAwaiter().GetResult();
 
-        public async Task<T> GetAsync<T>(string key) where T : class
+        public async Task<T> GetAsync<T>(string key)
         {
-            T result = null;
-
             if (cacheConfiguration.CacheEnabled)
             {
                 var distributedCacheKey = BuildKey(key);
@@ -48,7 +46,10 @@ namespace Otc.Caching
 
                     if (cache != null)
                     {
-                        result = JsonConvert.DeserializeObject<T>(cache);
+                        var value = JsonConvert.DeserializeObject<T>(cache);
+
+                        return ConvertValueToGenericType(value);
+
                     }
 
                     logger.LogDebug("{MethodName}: Cache for key '{DistributedCacheKey}' " +
@@ -56,12 +57,12 @@ namespace Otc.Caching
                 }
                 catch (Exception e)
                 {
-                    logger.LogWarning(e, "{MethodName}: Exception was thrown while reading cache.", 
+                    logger.LogWarning(e, "{MethodName}: Exception was thrown while reading cache.",
                         nameof(GetAsync));
                 }
             }
 
-            return result;
+            return default;
         }
 
         public void Remove(string key) =>
@@ -86,25 +87,23 @@ namespace Otc.Caching
             }
         }
 
-        public void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) 
-            where T : class => 
-                SetAsync<T>(key, value, absoluteExpirationRelativeToNow).GetAwaiter().GetResult();
+        public void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) =>
+            SetAsync<T>(key, value, absoluteExpirationRelativeToNow).GetAwaiter().GetResult();
 
-        public async Task SetAsync<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) 
-            where T : class
+        public async Task SetAsync<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow)
         {
             if (cacheConfiguration.CacheEnabled)
             {
                 var distributedCacheKey = BuildKey(key);
 
-                logger.LogInformation("{MethodName}: Creating cache with key '{DistributedCacheKey}'", 
+                logger.LogInformation("{MethodName}: Creating cache with key '{DistributedCacheKey}'",
                     nameof(SetAsync), distributedCacheKey);
 
                 try
                 {
 
-                    await distributedCache.SetStringAsync(distributedCacheKey, 
-                        JsonConvert.SerializeObject(value), 
+                    await distributedCache.SetStringAsync(distributedCacheKey,
+                        JsonConvert.SerializeObject(value),
                         new DistributedCacheEntryOptions()
                         {
                             AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow
@@ -112,7 +111,7 @@ namespace Otc.Caching
 
                     logger.LogInformation("{MethodName}: Cache with key {DistributedCacheKey} was " +
                         "successful created with absolute expiration set to {Expiration}",
-                        nameof(SetAsync), distributedCacheKey, 
+                        nameof(SetAsync), distributedCacheKey,
                         DateTimeOffset.Now.Add(absoluteExpirationRelativeToNow));
                 }
                 catch (Exception e)
@@ -124,20 +123,19 @@ namespace Otc.Caching
             }
         }
 
-        public bool TryGet<T>(string key, out T value) where T : class
+        public bool TryGet<T>(string key, out T value)
         {
             value = GetAsync<T>(key).GetAwaiter().GetResult();
 
             return value != null ? true : false;
         }
 
-        public async Task<T> GetAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, 
-            Func<Task<T>> funcAsync) 
-            where T : class
+        public async Task<T> GetAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow,
+            Func<Task<T>> funcAsync)
         {
             var value = await GetAsync<T>(key);
-
-            if (value == null)
+            
+            if (value.Equals(default(T)))
             {
                 if (funcAsync != null)
                 {
@@ -149,5 +147,12 @@ namespace Otc.Caching
 
             return value;
         }
+
+        private T ConvertValueToGenericType<T>(T value)
+        {
+            var convertToType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+            return (T)Convert.ChangeType(value, convertToType, CultureInfo.InvariantCulture);
         }
     }
+}
