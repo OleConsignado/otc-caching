@@ -24,6 +24,8 @@ services.AddOtcDistributedCache(new DistributedCacheConfiguration(){
 Async
 
 ```cs
+//Trying to get data from cache key 'my-cache-key-async',
+//if doest not found nothing, it will be cached.
 ITypedCache cache = ... // Get it by dependency injection
 var cacheKey = "my-cache-key-async";
 
@@ -34,6 +36,7 @@ var myModelObj = await cache.GetAsync<MyModelClass>(cacheKey, TimeSpan.FromSecon
 ```
 
 ```cs
+//Trying to get data from cache key 'my-cache-get-key-async'.
 ITypedCache cache = ... // Get it by dependency injection
 var cacheKey = "my-cache-get-key-async";
 
