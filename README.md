@@ -18,10 +18,10 @@ services.AddOtcDistributedCache(new DistributedCacheConfiguration(){
 
 ```
 
-### Usage
+## Usage
 
 
-Async
+1. Get the data from cache key 'my-cache-key-async', if does not found nothing, it will cache the value.
 
 ```cs
 ITypedCache cache = ... // Get it by dependency injection
@@ -33,6 +33,8 @@ var myModelObj = await cache.GetAsync<MyModelClass>(cacheKey, TimeSpan.FromSecon
 } ));
 ```
 
+2. Get the data from cache key 'my-cache-get-key-async'.
+
 ```cs
 ITypedCache cache = ... // Get it by dependency injection
 var cacheKey = "my-cache-get-key-async";
@@ -40,15 +42,11 @@ var cacheKey = "my-cache-get-key-async";
 var myModelObjFromCache = await cache.GetAsync<MyModelClass>(cacheKey);
 ```
 
-Sync
-
+3. Cache the data with the cache key 'set-cache-async' and getting the data with the given key.
 ```cs
-ITypedCache cache = ... // Get it by dependency injection
-var cacheKey = "my-cache-key-sync";
+var cacheKey = "set-cache-async";
 
-var myModelObj = cache.CacheManager<MyModelClass>(cacheKey, TimeSpan.FromSeconds(30), () => { 
-    myModelObj = ... // retrieve the object from it source here
-    return myModelObj;
-} ));
+await typedCache.SetAsync(cacheKey, new User(), TimeSpan.FromSeconds(30));
+
+var resultFromCache = await typedCache.GetAsync<User>("Test_SetAsync");
 ```
-
