@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Otc.Caching.Abstractions;
 using Otc.Caching.DistributedCache.All;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -35,7 +34,7 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public async void Test_CacheManagerAsync_SetAsync()
+        public async void Test_GetAsync_SetAsync()
         {
             var resultExpectedFromCache = await typedCache.GetAsync("success",
                 TimeSpan.FromSeconds(30), async () => new User()
@@ -51,68 +50,28 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public void Test_CacheManager_Set()
+        public async void Test_GetAsync_ExpiresCache()
         {
-            var resultExpectedFromCache = typedCache.CacheManager("success",
-                TimeSpan.FromSeconds(30), () => new User()
-                {
-                    Id = 1,
-                    Name = "Success test"
-                });
-
-            resultExpectedFromCache = typedCache.CacheManager<User>("success",
-                TimeSpan.FromSeconds(1), null);
-
-            Assert.Equal(resultExpectedFromCache.Id, resultExpectedFromCache.Id);
-        }
-
-        [Fact]
-        public async void Test_CacheManagerAsync_GetAsync_ExpiresCache()
-        {
-            await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync_ExpiresCache",
+            await typedCache.GetAsync<User>("Test_GetAsync_ExpiresCache",
                 TimeSpan.FromSeconds(1), null);
 
             await Task.Delay(1500);
 
-            typedCache.TryGet("Test_CacheManagerAsync_GetAsync_ExpiresCache", 
+            typedCache.TryGet("Test_GetAsync_ExpiresCache",
                 out User resultFromCache);
 
             Assert.Null(resultFromCache);
         }
 
         [Fact]
-        public void Test_CacheManager_Get_ExpiresCache()
+        public async void Test_GetAsync_With_TryGet()
         {
-            typedCache.CacheManager<User>("Test_CacheManager_Get_ExpiresCache",
+            await typedCache.GetAsync<User>("Test_GetAsync",
                 TimeSpan.FromSeconds(1), null);
 
-            Thread.Sleep(1500);
-
-            typedCache.TryGet("Test_CacheManager_Get_ExpiresCache", out User resultFromCache);
+            typedCache.TryGet("Test_GetAsync", out User resultFromCache);
 
             Assert.Null(resultFromCache);
-        }
-
-        [Fact]
-        public async void Test_CacheManagerAsync_GetAsync()
-        {
-            await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync",
-                TimeSpan.FromSeconds(1), null);
-
-            typedCache.TryGet("Test_CacheManagerAsync_GetAsync", out User resultFromCache);
-
-            Assert.Null(resultFromCache);
-        }
-
-        [Fact]
-        public void Test_CacheManager_Get()
-        {
-            typedCache.CacheManager<User>("Test_CacheManager_Get", 
-                TimeSpan.FromSeconds(30), () => new User());
-
-            typedCache.TryGet("Test_CacheManager_Get", out User resultFromCache);
-
-            Assert.NotNull(resultFromCache);
         }
 
         [Fact]

@@ -149,17 +149,5 @@ namespace Otc.Caching
 
             return value;
         }
-
-        public T CacheManager<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<T> func) 
-            where T : class
-        {
-            Func<Task<T>> newTask = null;
-
-            if (func != null)
-                newTask = async () => func();
-
-            return GetAsync<T>(key, absoluteExpirationRelativeToNow, newTask)
-                    .GetAwaiter().GetResult();
-        }
     }
 }
