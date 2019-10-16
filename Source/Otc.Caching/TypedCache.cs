@@ -3,7 +3,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Otc.Caching.Abstractions;
 using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Otc.Caching
@@ -37,8 +39,8 @@ namespace Otc.Caching
             {
                 var distributedCacheKey = BuildKey(key);
 
-                logger.LogDebug("{MethodName}: Reading cache for key " +
-                    "'{DistributedCacheKey}'.", nameof(GetAsync), distributedCacheKey);
+                logger.LogDebug($"{nameof(GetAsync)}: Reading cache for key " +
+                    "'{DistributedCacheKey}'.", distributedCacheKey);
 
                 try
                 {
@@ -52,13 +54,12 @@ namespace Otc.Caching
 
                     }
 
-                    logger.LogDebug("{MethodName}: Cache for key '{DistributedCacheKey}' " +
-                        "was successfuly read.", nameof(GetAsync), distributedCacheKey);
+                    logger.LogDebug($"{nameof(GetAsync)}: Cache for key '{{DistributedCacheKey}}' " +
+                        "was successfuly read.", distributedCacheKey);
                 }
                 catch (Exception e)
                 {
-                    logger.LogWarning(e, "{MethodName}: Exception was thrown while reading cache.",
-                        nameof(GetAsync));
+                    logger.LogWarning(e, $"{nameof(GetAsync)}: Exception was thrown while reading cache.");
                 }
             }
 
@@ -81,8 +82,8 @@ namespace Otc.Caching
                 catch (Exception e)
                 {
                     logger.LogWarning(e,
-                        "{MethodName}: Exception was thrown while removing cache with key " +
-                        "'{DistributedCacheKey}'.", nameof(RemoveAsync), distributedCacheKey);
+                        $"{nameof(RemoveAsync)}: Exception was thrown while removing cache with key " +
+                        "'{DistributedCacheKey}'.", distributedCacheKey);
                 }
             }
         }
@@ -96,8 +97,8 @@ namespace Otc.Caching
             {
                 var distributedCacheKey = BuildKey(key);
 
-                logger.LogInformation("{MethodName}: Creating cache with key '{DistributedCacheKey}'",
-                    nameof(SetAsync), distributedCacheKey);
+                logger.LogInformation($"{nameof(SetAsync)}: Creating cache with key '{{DistributedCacheKey}}'",
+                    distributedCacheKey);
 
                 try
                 {
@@ -109,16 +110,16 @@ namespace Otc.Caching
                             AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow
                         });
 
-                    logger.LogInformation("{MethodName}: Cache with key {DistributedCacheKey} was " +
+                    logger.LogInformation($"{nameof(SetAsync)}: Cache with key {{DistributedCacheKey}} was " +
                         "successful created with absolute expiration set to {Expiration}",
-                        nameof(SetAsync), distributedCacheKey,
+                        distributedCacheKey,
                         DateTimeOffset.Now.Add(absoluteExpirationRelativeToNow));
                 }
                 catch (Exception e)
                 {
                     logger.LogWarning(e,
-                        "{MethodName}: Exception was thrown while writing cache with key " +
-                        "'{DistributedCacheKey}'.", nameof(GetAsync), distributedCacheKey);
+                        $"{nameof(SetAsync)}: Exception was thrown while writing cache with key " +
+                        "'{DistributedCacheKey}'.", distributedCacheKey);
                 }
             }
         }
@@ -135,13 +136,13 @@ namespace Otc.Caching
         {
             var value = await GetAsync<T>(key);
             
-            if (value.Equals(default(T)))
+            if (value == null || value.Equals(default(T)))
             {
                 if (funcAsync != null)
                 {
                     value = await funcAsync();
 
-                    await SetAsync<T>(key, value, absoluteExpirationRelativeToNow);
+                    await SetAsync(key, value, absoluteExpirationRelativeToNow);
                 }
             }
 

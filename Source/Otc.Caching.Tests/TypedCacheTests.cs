@@ -34,7 +34,7 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public async void Test_CacheManagerAsync_SetAsync()
+        public async void Test_GetAsync_SetAsync()
         {
             var resultExpectedFromCache = await typedCache.GetAsync("success",
                 TimeSpan.FromSeconds(30), async () =>
@@ -54,9 +54,9 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public async void Test_CacheManagerAsync_SetAsync_With_LongValue()
+        public async void Test_GetAsync_SetAsync_With_LongValue()
         {
-            long value = 123456789l;
+            long value = 123456789;
 
             var resultExpectedFromCache = await typedCache.GetAsync("success",
                 TimeSpan.FromSeconds(30), async () =>
@@ -74,14 +74,14 @@ namespace Otc.Caching.Tests
 
         [Fact]
         [Obsolete]
-        public async void Test_CacheManagerAsync_GetAsync_ExpiresCache()
+        public async void Test_GetAsync_ExpiresCache()
         {
-            await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync_ExpiresCache",
+            await typedCache.GetAsync<User>("Test_GetAsync_ExpiresCache",
                 TimeSpan.FromSeconds(1), null);
 
             await Task.Delay(1500);
 
-            typedCache.TryGet("Test_CacheManagerAsync_GetAsync_ExpiresCache",
+            typedCache.TryGet("Test_GetAsync_ExpiresCache",
                 out User resultFromCache);
 
             Assert.Null(resultFromCache);
@@ -89,12 +89,12 @@ namespace Otc.Caching.Tests
 
         [Fact]
         [Obsolete]
-        public async void Test_CacheManagerAsync_GetAsync()
+        public async void Test_GetAsync_TryGet()
         {
-            await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync",
+            await typedCache.GetAsync<User>("Test_GetAsync",
                 TimeSpan.FromSeconds(1), null);
 
-            typedCache.TryGet("Test_CacheManagerAsync_GetAsync", out User resultFromCache);
+            typedCache.TryGet("Test_GetAsync", out User resultFromCache);
 
             Assert.Null(resultFromCache);
         }

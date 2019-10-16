@@ -45,28 +45,25 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        private static void AddDistributedSqlServerCache(IServiceCollection services, 
+        private static void AddDistributedSqlServerCache(IServiceCollection services,
             DistributedCacheConfiguration distributedCacheConfiguration)
         {
             if (string.IsNullOrEmpty(distributedCacheConfiguration.CacheSqlConnectionString))
             {
                 throw new InvalidOperationException(
-                    $"'{nameof(DistributedCacheConfiguration.CacheSqlConnectionString)}' configuration " +
-                    $"is required for 'StorageType.SqlServer'.");
+                    "'CacheSqlConnectionString' configuration is required for 'StorageType.SqlServer'.");
             }
 
             if (string.IsNullOrEmpty(distributedCacheConfiguration.CacheSqlSchemaName))
             {
                 throw new InvalidOperationException(
-                    $"'{nameof(DistributedCacheConfiguration.CacheSqlSchemaName)}' configuration " +
-                    $"is required for 'StorageType.SqlServer'.");
+                    "'CacheSqlSchemaName' configuration is required for 'StorageType.SqlServer'.");
             }
 
             if (string.IsNullOrEmpty(distributedCacheConfiguration.CacheSqlTableName))
             {
                 throw new InvalidOperationException(
-                    $"'{nameof(DistributedCacheConfiguration.CacheSqlTableName)}' configuration " +
-                    $"is required for 'StorageType.SqlServer'.");
+                    "'CacheSqlTableName' configuration is required for 'StorageType.SqlServer'.");
             }
 
             services.AddDistributedSqlServerCache(options =>
@@ -83,15 +80,13 @@ namespace Microsoft.Extensions.DependencyInjection
             if (string.IsNullOrEmpty(distributedCacheConfiguration.CacheRedisInstanceName))
             {
                 throw new InvalidOperationException(
-                    $"'{nameof(DistributedCacheConfiguration.CacheRedisInstanceName)}' configuration " +
-                    $"is required for 'StorageType.Redis'.");
+                    "'CacheRedisInstanceName' configuration is required for 'StorageType.Redis'.");
             }
 
             if (string.IsNullOrEmpty(distributedCacheConfiguration.CacheRedisConfiguration))
             {
                 throw new InvalidOperationException(
-                    $"'{nameof(DistributedCacheConfiguration.CacheRedisConfiguration)}' configuration " +
-                    $"is required for 'StorageType.Redis'.");
+                    "'CacheRedisConfiguration' configuration is required for 'StorageType.Redis'.");
             }
 
             services.AddDistributedRedisCache(options =>
@@ -99,7 +94,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.Configuration = distributedCacheConfiguration.CacheRedisConfiguration;
                 options.InstanceName = distributedCacheConfiguration.CacheRedisInstanceName;
             });
-
         }
 
         private static void AddDistributedMemoryCache(IServiceCollection services,
