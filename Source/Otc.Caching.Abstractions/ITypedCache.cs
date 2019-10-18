@@ -30,7 +30,8 @@ namespace Otc.Caching.Abstractions
         /// <typeparam name="T">generic class</typeparam>
         /// <param name="key">key who identify the data</param>
         /// <returns>The object read from cache or null if doesn't exists.</returns>
-        T Get<T>(string key);
+        [Obsolete]
+        T Get<T>(string key) where T : class;
 
         /// <summary>
         /// Convenient way to get/test if exists.
@@ -43,7 +44,8 @@ namespace Otc.Caching.Abstractions
         /// <param name="key">key who identify the data</param>
         /// <param name="value">value for store in cache</param>
         /// <returns>True if the cache exists; Otherwise False</returns>
-        bool TryGet<T>(string key, out T value);
+        [Obsolete]
+        bool TryGet<T>(string key, out T value) where T : class;
 
         /// <summary>
         /// Async - Set an object to cache with the given absoluteExpirationRelativeToNow duration.
@@ -69,7 +71,9 @@ namespace Otc.Caching.Abstractions
         /// <param name="key">key who identify the data</param>
         /// <param name="value">value for store in cache</param>
         /// <param name="absoluteExpirationRelativeToNow">time/period that will expires after it</param>
-        void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow);
+        [Obsolete]
+        void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) 
+            where T : class;
 
         /// <summary>
         /// Async - Remove the item with the provided key from cache.]
@@ -89,6 +93,7 @@ namespace Otc.Caching.Abstractions
         /// </para>
         /// </summary>
         /// <param name="key">key who identify the data</param>
+        [Obsolete]
         void Remove(string key);
 
         /// <summary>

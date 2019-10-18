@@ -31,7 +31,8 @@ namespace Otc.Caching
 
         private string BuildKey(string key) => keyPrefix + key;
 
-        public T Get<T>(string key) => GetAsync<T>(key).GetAwaiter().GetResult();
+        public T Get<T>(string key) where T : class =>
+            GetAsync<T>(key).GetAwaiter().GetResult();
 
         public async Task<T> GetAsync<T>(string key)
         {
@@ -88,7 +89,8 @@ namespace Otc.Caching
             }
         }
 
-        public void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) =>
+        public void Set<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow) 
+            where T : class => 
             SetAsync<T>(key, value, absoluteExpirationRelativeToNow).GetAwaiter().GetResult();
 
         public async Task SetAsync<T>(string key, T value, TimeSpan absoluteExpirationRelativeToNow)
@@ -124,7 +126,7 @@ namespace Otc.Caching
             }
         }
 
-        public bool TryGet<T>(string key, out T value)
+        public bool TryGet<T>(string key, out T value) where T : class
         {
             value = GetAsync<T>(key).GetAwaiter().GetResult();
 
