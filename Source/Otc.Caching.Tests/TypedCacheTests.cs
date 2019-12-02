@@ -35,50 +35,65 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public async void Test_CacheManagerAsync_SetAsync()
+        public async void Test_GetAsync_SetAsync_With_Object()
         {
-            var resultExpectedFromCache = await typedCache.GetAsync("success", TimeSpan.FromSeconds(30), async () => new User()
-            {
-                Id = 1,
-                Name = "Success test"
-            });
-
-            resultExpectedFromCache = await typedCache.GetAsync<User>("success", TimeSpan.FromSeconds(1), null);
+            var resultExpectedFromCache = await typedCache.GetAsync("Test_GetAsync_SetAsync_With_Object",
+                TimeSpan.FromSeconds(30),
+                async () =>
+                {
+                    await Task.Delay(10);
+                    return new User()
+                    {
+                        Id = 1,
+                        Name = "Success test"
+                    };
+                });
 
             Assert.Equal(resultExpectedFromCache.Id, resultExpectedFromCache.Id);
         }
 
         [Fact]
-        public async void Test_CacheManagerAsync_GetAsync_ExpiresCache()
+        public async void Test_GetAsync_SetAsync_With_LongValue()
         {
-            await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync_ExpiresCache", TimeSpan.FromSeconds(1), null);
+            long valueExpected = 123456789;
+            var keyCache = "Test_GetAsync_SetAsync_With_LongValue";
 
-            await Task.Delay(1500);
+            var resultExpectedFromCache = await typedCache.GetAsync(keyCache,
+                TimeSpan.FromSeconds(30),
+                async () =>
+                {
+                    await Task.Delay(10);
+                    return valueExpected;
+                });
 
-            typedCache.TryGet("Test_CacheManagerAsync_GetAsync_ExpiresCache", out User resultFromCache);
-
-            Assert.Null(resultFromCache);
+            Assert.Equal(valueExpected, resultExpectedFromCache);
+            Assert.IsType<long>(resultExpectedFromCache);
         }
 
         [Fact]
-        public async void Test_CacheManagerAsync_GetAsync()
+        public async void Test_GetAsync_SetAsync_With_CancellationToken()
         {
-            await typedCache.GetAsync<User>("Test_CacheManagerAsync_GetAsync", TimeSpan.FromSeconds(1), null);
+            long valueExpected = 123456789;
+            var keyCache = "Test_GetAsync_SetAsync_With_CancellationToken";
 
-            typedCache.TryGet("Test_CacheManagerAsync_GetAsync", out User resultFromCache);
+            var cancellationToken = new CancellationTokenSource();
 
-            Assert.Null(resultFromCache);
+            cancellationToken.Cancel();
+
+            var resultExpectedFromCache = await typedCache.GetAsync(keyCache,
+                TimeSpan.FromSeconds(30),
+                async () =>
+                {
+                    await Task.Delay(10);
+                    return valueExpected;
+                }, cancellationToken.Token);
+
+            Assert.Equal(valueExpected, resultExpectedFromCache);
+            Assert.IsType<long>(resultExpectedFromCache);
         }
 
         [Fact]
-        public async void Test_GetAsync()
-        {
-            var resultFromCache = await typedCache.GetAsync<User>("Test_GetAsync");
-
-            Assert.Null(resultFromCache);
-        }
-
-        [Fact]
+        [Obsolete]
         public void Test_Get()
         {
             var resultFromCache = typedCache.Get<User>("Test_Get");
@@ -87,16 +102,7 @@ namespace Otc.Caching.Tests
         }
 
         [Fact]
-        public async void Test_SetAsync()
-        {
-            await typedCache.SetAsync("Test_SetAsync", new User(), TimeSpan.FromSeconds(30));
-
-            var resultFromCache = await typedCache.GetAsync<User>("Test_SetAsync");
-
-            Assert.NotNull(resultFromCache);
-        }
-
-        [Fact]
+        [Obsolete]
         public void Test_Set()
         {
             typedCache.Set("Test_Set", new User(), TimeSpan.FromSeconds(30));
@@ -109,16 +115,14 @@ namespace Otc.Caching.Tests
         [Fact]
         public async void Test_RemoveAsync()
         {
-            await typedCache.SetAsync("Test_RemoveAsync", new User(), TimeSpan.FromSeconds(30));
+            await typedCache.GetAsync("Test_RemoveAsync", TimeSpan.FromSeconds(30), 
+                () => Task.FromResult(new User()));
 
             await typedCache.RemoveAsync("Test_RemoveAsync");
-
-            var resultFromCache = await typedCache.GetAsync<User>("Test_RemoveAsync");
-
-            Assert.Null(resultFromCache);
         }
 
         [Fact]
+        [Obsolete]
         public void Test_Remove()
         {
             typedCache.Set("Test_Remove", new User(), TimeSpan.FromSeconds(30));
