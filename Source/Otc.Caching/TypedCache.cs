@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Otc.Caching.Abstractions;
 using System;
+using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Otc.Caching
@@ -121,19 +123,29 @@ namespace Otc.Caching
 
         public async Task<T> GetAsync<T>(string key, TimeSpan absoluteExpirationRelativeToNow, Func<Task<T>> funcAsync) where T : class
         {
-            var value = await GetAsync<T>(key);
-
-            if (value == null)
+            var mutex = new Mutex(false, key);
+            try
             {
-                if (funcAsync != null)
+                mutex.WaitOne();
+
+                var value = await GetAsync<T>(key);
+
+                if (value == null)
                 {
-                    value = await funcAsync();
+                    if (funcAsync != null)
+                    {
+                        value = await funcAsync();
 
-                    await SetAsync<T>(key, value, absoluteExpirationRelativeToNow);
+                        await SetAsync<T>(key, value, absoluteExpirationRelativeToNow);
+                    }
                 }
-            }
 
-            return value;
+                return value;
+            }
+            finally
+            {
+                mutex.ReleaseMutex();
+            }
         }
     }
 }
