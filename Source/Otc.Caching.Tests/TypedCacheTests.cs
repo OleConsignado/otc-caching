@@ -65,7 +65,7 @@ namespace Otc.Caching.Tests
         {
             // Arrange & Act
             var key = nameof(GetAsync_FromInexistentKey_GetsNull);
-            var resultFromCache = await typedCache.GetAsync<User>("Test_GetAsync");
+            var resultFromCache = await typedCache.GetAsync<User>(key);
 
             // Assert
             Assert.Null(resultFromCache);
